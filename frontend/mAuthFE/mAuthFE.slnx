@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="mAuthFE/mAuthFE.vcxproj" Id="2ce346ea-82f8-4d5d-ba6b-0ea86e7d3dc5" />
+</Solution>

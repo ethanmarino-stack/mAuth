@@ -1,0 +1,28 @@
+[VERSION] Checking version...
+[HTTP] Sending GET request to: /get_version
+[HTTP] GET response length: 109
+[VERSION] Full response: {
+  "changelog": "",
+  "download_url": "",
+  "force_update": false,
+  "status": "ok",
+  "version": "1.0.0"
+}
+
+[VERSION] Version check passed! (v1.0.0)
+[HTTP] Sending POST request to: /login
+[HTTP] JSON: {"username":"username","password":"password","hwid":"5079AD7F906EDDESKTOP-D1QQ5GA"}
+[HTTP] Response received, length: 59
+[HTTP] Response: {
+  "message": "Invalid credentials",
+  "status": "fail"
+}
+
+[HTTP] Sending POST request to: /register
+[HTTP] JSON: {"username":"uswerrr","password":"password","license_key":"198289-1212-111111","hwid":"5079AD7F906EDDESKTOP-D1QQ5GA"}
+[HTTP] Response received, length: 75
+[HTTP] Response: {
+  "message": "Invalid or already used license key",
+  "status": "fail"
+}
+
