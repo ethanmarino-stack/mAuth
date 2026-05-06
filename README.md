@@ -1,284 +1,279 @@
-# mAuth - Authentication System for Programs
+# mAuth — Self-Hosted Authentication & Licensing System
 
-A lightweight, self-hosted authentication system for programs with HWID binding, license keys, session management, and version control.
+A lightweight, self-hosted authentication and licensing system designed specifically for **desktop applications**.
 
-## License
+mAuth provides **HWID-based locking**, **license key management**, **session validation**, and **version enforcement** — all in a simple, deployable stack using Flask and a native C++ client.
 
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**.
+---
 
-You are free to:
-- Share — copy and redistribute the material in any medium or format
-- Adapt — remix, transform, and build upon the material
+## 🚀 Why mAuth?
 
-Under the following terms:
-- Attribution — You must give appropriate credit, provide a link to the license
-- NonCommercial — You may not use the material for commercial purposes
+Most authentication systems are built for web apps (OAuth, Firebase, Auth0).
+mAuth is built for a completely different problem:
 
-For commercial use, please contact the author.
+> **Protecting and distributing desktop software.**
 
-Full license: https://creativecommons.org/licenses/by-nc/4.0/
+### What makes it different:
 
-## Features
+* 🔒 **HWID binding** — lock accounts to a specific machine
+* 🎫 **Built-in license system** — no external service needed
+* ⚡ **Real-time session validation** — prevent bypassing auth
+* 📦 **Version enforcement** — force updates when needed
+* 🧠 **Self-hosted** — no third-party dependencies
+* 💻 **Native C++ client** included
 
-- 🔐 User registration and login with HWID binding
-- 🎫 License key system (generate and manage keys)
-- 💓 Session heartbeat to keep users authenticated
-- 📦 Version control and enforcement
-- 🖥️ Web-based admin panel (localhost only)
-- 🔒 HWID lock to prevent account sharing
-- 🚀 Cloudflare Tunnel support for external access
+---
 
-## Project Structure
+## 📌 Use Cases
+
+* Software licensing / activation systems
+* Indie developer tools
+* Private or paid desktop applications
+* Internal tools requiring access control
+
+---
+
+## 🧩 Features
+
+* 🔐 User registration & login with HWID binding
+* 🎫 License key generation and tracking
+* 💓 Session heartbeat (anti-timeout / anti-bypass)
+* 📦 Version control with forced updates
+* 🖥️ Local admin panel
+* 🔒 HWID lock to prevent account sharing
+* 🌐 Cloudflare Tunnel support for external access
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+Client (C++)
+   ↓
+Flask API (Auth Server)
+   ↓
+SQLite Database
+```
+
+**Flow:**
+
+1. User registers with license key
+2. HWID is stored and locked
+3. Client authenticates → receives session token
+4. Heartbeat maintains session
+5. Server validates session + version continuously
+
+---
+
+## 📁 Project Structure
 
 ```
 mAuth/
 ├── backend/
 │   └── mAuthBE/
-│       ├── app.py              # Flask server (auth backend)
+│       ├── app.py              # Flask auth server
 │       ├── requirements.txt    # Python dependencies
 │       └── database.db         # SQLite database (auto-created)
 └── frontend/
     └── mAuthFE/
         ├── auth.cpp            # C++ client implementation
-        ├── auth.h              # Client headers
-        ├── auth_state.h        # Client state variables
-        └── main.cpp            # Example client usage
+        ├── auth.h
+        ├── auth_state.h
+        └── main.cpp            # Example usage
 ```
 
-## Prerequisites
+---
 
-### Server Requirements (where you host the auth server)
-- Python 3.8+
-- SQLite3
-- Cloudflared (for external access)
+## ⚙️ Quick Start
 
-### Client Requirements
-- Windows 7/10/11
-- Visual Studio 2019+ (for compilation)
+### 1. Start the Server
 
-## Quick Start
-
-### Server Setup (Your Machine)
-
-1. **Navigate to the backend folder**
 ```bash
 cd mAuth/backend/mAuthBE
-```
-
-2. **Install Python dependencies**
-```bash
 pip install flask flask-cors bcrypt
-```
-
-3. **Run the Flask server**
-```bash
 python app.py
 ```
 
-You should see:
+Server output:
+
 ```
-==================================================
 mAuth - Authentication Server
 Admin Panel: http://127.0.0.1:5000/admin
-==================================================
 ```
 
-4. **Expose the server to the internet (for friends to connect)**
+---
 
-Using Cloudflare Tunnel (recommended):
+### 2. Expose to Internet (Optional)
+
 ```bash
 cloudflared tunnel --url http://localhost:5000
 ```
 
-This will give you a URL like: `https://random-name.trycloudflare.com`
+You’ll get a public URL like:
 
-> **Note:** Keep both the Flask server and Cloudflare tunnel running in separate terminals.
-
-### Client Setup (Your Program)
-
-1. **Navigate to the frontend folder**
-```bash
-cd mAuth/frontend/mAuthFE
+```
+https://example.trycloudflare.com
 ```
 
-2. **Update the server URL in `auth.cpp`**
+---
+
+### 3. Configure the Client
+
+Edit `auth.cpp`:
+
 ```cpp
-// Change this to your Cloudflare URL
 const wchar_t* SERVER_HOST = L"your-cloudflare-url.trycloudflare.com";
 const int SERVER_PORT = 443;
 ```
 
-3. **Update the version number (if needed)**
-```cpp
-// In check_version() function
-std::string current_version = "1.0.0";
+---
+
+### 4. Build Client
+
+* Open in Visual Studio
+* Build → Release x64
+
+---
+
+### 5. Generate License Keys
+
+* Go to: `http://127.0.0.1:5000/admin`
+* Generate keys
+* Distribute to users
+
+---
+
+## 🛠️ Admin Panel
+
+Accessible at:
+
+```
+http://127.0.0.1:5000/admin
 ```
 
-4. **Compile the client**
-   - Open in Visual Studio
-   - Build as Release x64
-   - The executable will be generated
+### Capabilities:
 
-5. **Generate license keys**
-   - Open admin panel: `http://127.0.0.1:5000/admin`
-   - Go to "License Management"
-   - Click "Generate" to create keys
-   - Share keys with your users
+* License generation & tracking
+* User management (reset HWID, delete users)
+* Session monitoring and termination
+* Version control (force updates)
 
-6. **Distribute your program**
-   - Give users the compiled `.exe`
-   - Give them a license key
-   - They can now register/login
+> ⚠️ Admin panel is restricted to localhost.
+> For production environments, additional authentication is recommended.
 
-## Admin Panel
+---
 
-Access the admin panel at: `http://127.0.0.1:5000/admin`
+## 🔌 API Endpoints
 
-### Features:
-- **License Management** - Generate new license keys, view unused/used keys
-- **User Management** - Reset HWIDs, delete users
-- **Version Control** - Update version number, set force update
-- **Session Management** - View active sessions, kill sessions
-- **User List** - View all registered users with their HWIDs and license keys
+| Endpoint       | Method | Description               |
+| -------------- | ------ | ------------------------- |
+| `/login`       | POST   | Authenticate user         |
+| `/register`    | POST   | Register with license key |
+| `/heartbeat`   | POST   | Maintain session          |
+| `/validate`    | POST   | Validate session          |
+| `/logout`      | POST   | End session               |
+| `/get_version` | GET    | Get version info          |
 
-> **Security Note:** The admin panel is only accessible from localhost (your machine). No password needed - physical access is the security.
+---
 
-## API Endpoints
+## 🗄️ Database Schema
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/login` | POST | Authenticate user and create session |
-| `/register` | POST | Register new user with license key |
-| `/heartbeat` | POST | Keep session alive (call every 30 seconds) |
-| `/validate` | POST | Check if session is still valid |
-| `/logout` | POST | End a session |
-| `/get_version` | GET | Get current version info |
+* **users** — credentials, HWID, license
+* **sessions** — tokens, expiry, activity
+* **licenses** — keys, usage status
+* **version** — version + force update flag
 
-## Database Structure
+---
 
-The system creates a `database.db` file with these tables:
+## ⚡ Configuration
 
-- `users` - User accounts (username, password hash, HWID, license key)
-- `sessions` - Active sessions (tokens, expiry, last seen)
-- `licenses` - License keys (key, used status, used by)
-- `version` - Version information (version number, force update flag)
+### Update Version
 
-## Configuration
-
-### Changing Default Version
-
-Edit the version in the admin panel or directly in the database:
 ```bash
 sqlite3 database.db "UPDATE version SET version='1.0.1' WHERE id=1;"
 ```
 
-### Making Update Mandatory
+### Reset HWID
 
-In admin panel, check "Force update" when changing version. Users on old versions will be blocked.
+Use admin panel → User Management
 
-### Resetting a User's HWID
+---
 
-In admin panel → User Management → Enter username → Click "Reset HWID"
+## 🧪 Troubleshooting
 
-This allows a user to use a different computer.
+**Connection issues**
 
-## Troubleshooting
+* Ensure Flask server is running
+* Ensure Cloudflare tunnel is active
+* Verify client URL matches server
 
-### "Failed to connect to server"
-- Make sure Flask server is running (`python app.py`)
-- Make sure Cloudflare tunnel is running (`cloudflared tunnel --url http://localhost:5000`)
-- Check if the URL in `auth.cpp` matches your current Cloudflare URL
-- Verify your friend can reach the URL in their browser
+**HWID mismatch**
 
-### "Version mismatch"
-- Update `current_version` in `auth.cpp` to match the server version
-- Or update the version in the admin panel
+* Reset HWID in admin panel
 
-### "Invalid or already used license key"
-- License key is already used or doesn't exist
-- Generate a new key in the admin panel
+**License errors**
 
-### "HWID mismatch"
-- User's HWID doesn't match the one on their account
-- Reset their HWID in the admin panel
+* Ensure key is valid and unused
 
-### Cloudflare tunnel URL changed
-- Free Cloudflare tunnels give a new random URL each restart
-- Update `SERVER_HOST` in `auth.cpp` and recompile
-- Or set up a named tunnel with a Cloudflare account for a permanent URL
+**Version mismatch**
 
-## File Structure Details
+* Update client or server version
 
-```
-mAuth/
-├── backend/
-│   └── mAuthBE/
-│       ├── app.py              # Flask server (auth backend)
-│       ├── requirements.txt    # Python dependencies
-│       └── database.db         # SQLite database (auto-created)
-└── frontend/
-    └── mAuthFE/
-        ├── auth.cpp            # C++ client implementation
-        ├── auth.h              # Client headers
-        ├── auth_state.h        # Client state variables
-        └── main.cpp            # Example client usage
-```
+---
 
-## Requirements File
+## 🔐 Security Notes
 
-Create `mAuth/backend/mAuthBE/requirements.txt`:
+* Passwords hashed with bcrypt
+* Sessions expire after inactivity
+* Heartbeat required for persistence
+* HWIDs normalized and enforced
 
-```txt
-Flask
-flask-cors
-bcrypt
-```
+> ⚠️ This system is designed for lightweight protection.
+> It is not a replacement for enterprise-grade security.
 
-## Security Notes
+---
 
-- Admin panel is only accessible from localhost for security
-- Passwords are hashed using bcrypt
-- HWIDs are normalized and case-insensitive
-- Sessions expire after 1 hour of inactivity
-- Heartbeat required every 30 seconds to keep session alive
+## 📦 Requirements
 
-## License
+### Server
 
-This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**.
+* Python 3.8+
+* SQLite3
+* Flask
 
-You are free to:
-- Share — copy and redistribute the material in any medium or format
-- Adapt — remix, transform, and build upon the material
+### Client
 
-Under the following terms:
-- Attribution — You must give appropriate credit, provide a link to the license
-- NonCommercial — You may not use the material for commercial purposes
+* Windows 7/10/11
+* Visual Studio 2019+
 
-For commercial use, please contact the author.
+---
 
-Full license: https://creativecommons.org/licenses/by-nc/4.0/
+## 📜 License
 
-## Quick Commands Reference
+This project is licensed under the
+**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**.
 
-```bash
-# Start Flask server (from backend/mAuthBE)
-python app.py
+* Free for personal and non-commercial use
+* Commercial use requires permission
 
-# Start Cloudflare tunnel
-cloudflared tunnel --url http://localhost:5000
+Full license:
+https://creativecommons.org/licenses/by-nc/4.0/
 
-# View database (for debugging)
-sqlite3 database.db "SELECT * FROM users;"
-sqlite3 database.db "SELECT * FROM sessions;"
-sqlite3 database.db "SELECT * FROM licenses;"
+---
 
-# Reset database (delete and restart server)
-rm database.db
-python app.py
-```
+## 🧠 Final Notes
 
-## Credits
+mAuth is built to be:
 
-Created by Ethan - mAuth Authentication System
+* Simple to deploy
+* Easy to integrate
+* Hard to bypass (for its scope)
 
+If you’re building a desktop application and need **basic licensing + authentication**, this gives you a complete starting point.
 
+---
+
+## 👤 Author
+
+Created by Ethan
+mAuth Authentication System
