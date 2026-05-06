@@ -280,5 +280,5 @@ python app.py
 ## Credits
 
 Created by Ethan - mAuth Authentication System
-```
+
 
