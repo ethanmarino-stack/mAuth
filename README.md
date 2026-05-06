@@ -281,9 +281,3 @@ python app.py
 
 Created by Ethan - mAuth Authentication System
 ```
-
-This README includes:
-- The CC BY-NC 4.0 license (free for personal, not commercial)
-- Correct folder structure (`\mAuth\backend\mAuthBE` and `\mAuth\frontend\mAuthFE`)
-- Changed "cheat" to "program" throughout
-- All in one block so you can save it as `README.md`
